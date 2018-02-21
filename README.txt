@@ -1,0 +1,1 @@
+Write your own Db Movie API key inside res -> strings.xml -> api_key string
