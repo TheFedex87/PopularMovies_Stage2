@@ -131,13 +131,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/movie_overview" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/videos_container"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintTop_toBottomOf="@+id/movie_overview_separator" />
+                app:layout_constraintTop_toBottomOf="@+id/movie_overview_separator">
+
+                <ProgressBar
+                    android:id="@+id/loader_videos_pb"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/videos_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                     />
+
+            </FrameLayout>
 
         </android.support.constraint.ConstraintLayout>
 

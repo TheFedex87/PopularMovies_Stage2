@@ -1,5 +1,6 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
+import android.os.AsyncTask;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +46,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView movieVoteAverage;
     private TextView movieOverview;
 
+    private ProgressBar videosLoader;
     private RecyclerView videosContainer;
     ///////
 
@@ -55,7 +57,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private RetrofitApiInterface apiModel;
     private List<Video> videos;
 
-    private boolean movieRetrieved, videosRetrieved, reviewsRetrieved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieVoteAverage = findViewById(R.id.movie_vote_average);
         movieOverview = findViewById(R.id.movie_overview);
 
+        videosLoader = findViewById(R.id.loader_videos_pb);
         videosContainer = findViewById(R.id.videos_container);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         videosContainer.setLayoutManager(linearLayoutManager);
@@ -121,7 +123,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 try {
-                    movieRetrieved = true;
                     if (response.errorBody() != null){
                         String err = "Response error";
                         Log.d(TAG, err);
@@ -132,7 +133,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     Movie movieDetail = response.body();
                     movieDuration.setText(String.valueOf(movieDetail.getRuntime()));
 
-                    if (videosRetrieved) setShowLoader(false);
+                    setShowLoader(false);
 
                 } catch (Exception ex){
                     Log.d(TAG, ex.getMessage());
@@ -149,12 +150,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void retrieveVideos(long movieId){
         callVideos = apiModel.videosList(movieId, API_KEY);
+        setShowVideoLoader(true);
 
         callVideos.enqueue(new Callback<ApiVideosModel>() {
             @Override
             public void onResponse(Call<ApiVideosModel> call, Response<ApiVideosModel> response) {
                 try {
-                    videosRetrieved = true;
                     if (response.errorBody() != null){
                         String err = "Response error";
                         Log.d(TAG, err);
@@ -163,9 +164,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     }
 
                     videos = response.body().getResults();
-                    videosAdapter.swapVideos(videos);
-                    if (movieRetrieved) setShowLoader(false);
+                    /*for (int i = 0; i <= 100; i++) {
+                        Video video = new Video();
+                        video.setName("Video #" + String.valueOf(i));
+                        videos.add(video);
+                    }*/
 
+                    videosAdapter.swapVideos(videos);
+                    setShowVideoLoader(false);
                 } catch (Exception ex){
                     Log.d(TAG, ex.getMessage());
                     Toast.makeText(MovieDetailsActivity.this, "Unexpected message: " + ex.getMessage(), Toast.LENGTH_LONG).show();
@@ -179,6 +185,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         });
     }
 
+
     /*
     When app is loading movies a progress bar is shoed and the grid is hidden, and when movies are loaded grid is visible and progress bar is hidden
      */
@@ -190,6 +197,17 @@ public class MovieDetailsActivity extends AppCompatActivity {
         else{
             loader.setVisibility(View.INVISIBLE);
             movieDetailsContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setShowVideoLoader(boolean shows) {
+        if (shows){
+            videosLoader.setVisibility(View.VISIBLE);
+            videosContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            videosLoader.setVisibility(View.INVISIBLE);
+            videosContainer.setVisibility(View.VISIBLE);
         }
     }
 }
