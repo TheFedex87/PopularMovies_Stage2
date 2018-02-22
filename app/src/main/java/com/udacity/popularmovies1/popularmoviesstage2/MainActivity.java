@@ -16,7 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.udacity.popularmovies1.popularmoviesstage2.model.ApiModel;
+import com.udacity.popularmovies1.popularmoviesstage2.model.ApiMoviesModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitApiInterface;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
@@ -36,8 +36,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
 
     private final int NUMBER_OF_COLUMNS = 2;
 
-    private Call<ApiModel> callMovies;
+    private Call<ApiMoviesModel> callMovies;
     private RetrofitApiInterface apiModel;
+
     private MoviesAdapter movieAdapter;
 
     private List<Movie> moviesList;
@@ -107,9 +108,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
      */
     private void retrieveMovies(){
         try {
-            callMovies.enqueue(new Callback<ApiModel>() {
+            callMovies.enqueue(new Callback<ApiMoviesModel>() {
                 @Override
-                public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
+                public void onResponse(Call<ApiMoviesModel> call, Response<ApiMoviesModel> response) {
                     try {
                         if (response.errorBody() != null){
                             String err = "Response error";
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Lis
                 }
 
                 @Override
-                public void onFailure(Call<ApiModel> call, Throwable t) {
+                public void onFailure(Call<ApiMoviesModel> call, Throwable t) {
 
                 }
             });

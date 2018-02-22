@@ -42,6 +42,10 @@ public class Movie implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
 
+    //Details information
+    @SerializedName("runtime")
+    private int runtime;
+
     public final static String CLASS_STRING_EXTRA = "MOVIE";
 
     public Movie(){}
@@ -95,9 +99,7 @@ public class Movie implements Parcelable {
         return  posterPath;
     }
 
-    public void setOriginalLanguage(String originalLanguage){
-        this.originalLanguage = originalLanguage;
-    }
+    public void setOriginalLanguage(String originalLanguage){ this.originalLanguage = originalLanguage; }
     public String getOriginalLanguage(){
         return  originalLanguage;
     }
@@ -144,6 +146,9 @@ public class Movie implements Parcelable {
         return releaseDate;
     }
 
+    //Details information
+    public void setRuntime(int runtime) { this.runtime = runtime; }
+    public int getRuntime() { return runtime; }
 
     @Override
     public int describeContents() {
@@ -158,6 +163,8 @@ public class Movie implements Parcelable {
         dest.writeString(this.backdropPath);
         dest.writeString(this.overview);
         dest.writeString(this.releaseDate);
+        dest.writeInt(this.runtime);
+        dest.writeString(this.posterPath);
     }
 
     protected Movie(Parcel in) {
@@ -167,6 +174,8 @@ public class Movie implements Parcelable {
         this.backdropPath = in.readString();
         this.overview = in.readString();
         this.releaseDate = in.readString();
+        this.runtime = in.readInt();
+        this.posterPath = in.readString();
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {

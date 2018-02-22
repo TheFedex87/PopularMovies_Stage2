@@ -7,7 +7,7 @@ import java.util.List;
  * Created by federico.creti on 16/02/2018.
  */
 
-public class ApiModel {
+public class ApiMoviesModel {
     private long page;
     private long totalResults;
     private long totalPages;
