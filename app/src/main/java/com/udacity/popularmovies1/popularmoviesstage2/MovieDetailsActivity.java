@@ -1,5 +1,8 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.popularmovies1.popularmoviesstage2.model.ApiReviewsModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiVideosModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
+import com.udacity.popularmovies1.popularmoviesstage2.model.Review;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Video;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitApiInterface;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
@@ -28,7 +33,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+public class MovieDetailsActivity extends AppCompatActivity
+        implements VideosAdapter.movieVideoClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
@@ -45,17 +51,22 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private TextView movieVoteAverage;
     private TextView movieOverview;
 
+    private ProgressBar loaderVideos;
     private RecyclerView videosContainer;
+
+    private ProgressBar loaderReviews;
+    private RecyclerView reviewsContainer;
     ///////
 
     private VideosAdapter videosAdapter;
+    private ReviewsAdapter reviewsAdapter;
 
     private Call<Movie> callMovie;
     private Call<ApiVideosModel> callVideos;
+    private Call<ApiReviewsModel> callReviews;
     private RetrofitApiInterface apiModel;
     private List<Video> videos;
-
-    private boolean movieRetrieved, videosRetrieved, reviewsRetrieved;
+    private List<Review> reviews;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +90,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieVoteAverage = findViewById(R.id.movie_vote_average);
         movieOverview = findViewById(R.id.movie_overview);
 
+        loaderVideos = findViewById(R.id.loader_videos_pb);
         videosContainer = findViewById(R.id.videos_container);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        videosContainer.setLayoutManager(linearLayoutManager);
-        videosAdapter = new VideosAdapter();
+        videosContainer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        videosAdapter = new VideosAdapter(this);
         videosContainer.setAdapter(videosAdapter);
+
+        loaderReviews = findViewById(R.id.loader_reviews_pb);
+        reviewsContainer = findViewById(R.id.reviews_container);
+        reviewsContainer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        reviewsAdapter = new ReviewsAdapter();
+        reviewsContainer.setAdapter(reviewsAdapter);
+
 
         //Retrieve the bundle
         Bundle bundle = getIntent().getExtras();
@@ -112,6 +130,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
             retrieveMovieDetails(movie.getId());
             retrieveVideos(movie.getId());
+            retrieveReviews(movie.getId());
         }
     }
 
@@ -121,7 +140,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
                 try {
-                    movieRetrieved = true;
+
                     if (response.errorBody() != null){
                         String err = "Response error";
                         Log.d(TAG, err);
@@ -132,11 +151,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     Movie movieDetail = response.body();
                     movieDuration.setText(String.valueOf(movieDetail.getRuntime()));
 
-                    if (videosRetrieved) setShowLoader(false);
+                    setShowLoader(false);
 
                 } catch (Exception ex){
                     Log.d(TAG, ex.getMessage());
-                    Toast.makeText(MovieDetailsActivity.this, "Unexpected message: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MovieDetailsActivity.this, "Unexpected error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -148,13 +167,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void retrieveVideos(long movieId){
+        setShowVideosLoader(true);
         callVideos = apiModel.videosList(movieId, API_KEY);
 
         callVideos.enqueue(new Callback<ApiVideosModel>() {
             @Override
             public void onResponse(Call<ApiVideosModel> call, Response<ApiVideosModel> response) {
                 try {
-                    videosRetrieved = true;
+
                     if (response.errorBody() != null){
                         String err = "Response error";
                         Log.d(TAG, err);
@@ -164,7 +184,39 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
                     videos = response.body().getResults();
                     videosAdapter.swapVideos(videos);
-                    if (movieRetrieved) setShowLoader(false);
+                    setShowVideosLoader(false);
+
+                } catch (Exception ex){
+                    Log.d(TAG, ex.getMessage());
+                    Toast.makeText(MovieDetailsActivity.this, "Unexpected error: " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiVideosModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void retrieveReviews(long movieId){
+        setShowReviewsLoader(true);
+        callReviews = apiModel.reviewsList(movieId, API_KEY);
+
+        callReviews.enqueue(new Callback<ApiReviewsModel>() {
+            @Override
+            public void onResponse(Call<ApiReviewsModel> call, Response<ApiReviewsModel> response) {
+                try {
+                    if (response.errorBody() != null){
+                        String err = "Response error";
+                        Log.d(TAG, err);
+                        Toast.makeText(MovieDetailsActivity.this, err, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    reviews = response.body().getResults();
+                    reviewsAdapter.swapReviews(reviews);
+                    setShowReviewsLoader(false);
 
                 } catch (Exception ex){
                     Log.d(TAG, ex.getMessage());
@@ -173,7 +225,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ApiVideosModel> call, Throwable t) {
+            public void onFailure(Call<ApiReviewsModel> call, Throwable t) {
 
             }
         });
@@ -190,6 +242,42 @@ public class MovieDetailsActivity extends AppCompatActivity {
         else{
             loader.setVisibility(View.INVISIBLE);
             movieDetailsContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setShowVideosLoader(boolean shows){
+        if (shows){
+            loaderVideos.setVisibility(View.VISIBLE);
+            videosContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            loaderVideos.setVisibility(View.INVISIBLE);
+            videosContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setShowReviewsLoader(boolean shows){
+        if (shows){
+            loaderReviews.setVisibility(View.VISIBLE);
+            reviewsContainer.setVisibility(View.INVISIBLE);
+        }
+        else{
+            loaderReviews.setVisibility(View.INVISIBLE);
+            reviewsContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onVideoItemClick(int clickedVideoIndex) {
+        String videoId = videos.get(clickedVideoIndex).getKey();
+
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + videoId));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + videoId));
+        try {
+            this.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            this.startActivity(webIntent);
         }
     }
 }
