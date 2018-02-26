@@ -1,6 +1,7 @@
 package com.udacity.popularmovies1.popularmoviesstage2.retrofit;
 
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiMoviesModel;
+import com.udacity.popularmovies1.popularmoviesstage2.model.ApiReviewsModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiVideosModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Video;
@@ -26,4 +27,7 @@ public interface RetrofitApiInterface {
 
     @GET("movie/{id}/videos")
     Call<ApiVideosModel> videosList(@Path("id") long id, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}/reviews")
+    Call<ApiReviewsModel> reviewsList(@Path("id") long id, @Query("api_key") String apiKey);
 }
