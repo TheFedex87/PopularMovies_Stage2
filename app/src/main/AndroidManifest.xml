@@ -25,6 +25,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.udacity.popularmovies1.popularmoviesstage2.MainActivity" />
         </activity>
+        
+        <provider
+            android:authorities="com.udacity.popularmovies1.popularmoviesstage2"
+            android:name="com.udacity.popularmovies1.popularmoviesstage2.data.MovieContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

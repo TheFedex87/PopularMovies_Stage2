@@ -3,5 +3,6 @@
     <string-array name="spinner_movie_sort">
         <item>@string/sort_popular</item>
         <item>@string/sort_top_rated</item>
+        <item>@string/favourites</item>
     </string-array>
 </resources>

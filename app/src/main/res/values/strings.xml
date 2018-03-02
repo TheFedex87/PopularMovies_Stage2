@@ -2,6 +2,7 @@
     <string name="app_name">PopularMovies</string>
     <string name="sort_top_rated">Top Rated</string>
     <string name="sort_popular">Popular</string>
+    <string name="favourites">Favourites</string>
     <string name="error_api_not_provided">API not provided. Movies cannot be loaded</string>
 
     <string name="movie_title_label">Title</string>
@@ -11,6 +12,7 @@
 
     <string name="movie_details_videos_label">Trailers</string>
     <string name="movie_details_reviews_label">Reviews</string>
+    <string name="movie_details_favourites_label">Favourites</string>
 
     <string name="api_key"></string>
 </resources>

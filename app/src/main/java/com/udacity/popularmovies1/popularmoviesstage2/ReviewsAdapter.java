@@ -45,6 +45,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
     }
 
     class ReviewsViewHolder extends ViewHolder {
+        private TextView reviewAuthor;
         private TextView review;
         private View reviewSeparator;
 
@@ -53,10 +54,12 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
 
             review = itemView.findViewById(R.id.review);
             reviewSeparator = itemView.findViewById(R.id.review_separator);
+            reviewAuthor = itemView.findViewById(R.id.review_author);
         }
 
         public void setReview(int position){
             review.setText(reviews.get(position).getContent());
+            reviewAuthor.setText(reviews.get(position).getAuthor());
 
             if (position == reviews.size() - 1)
                 reviewSeparator.setVisibility(View.INVISIBLE);
