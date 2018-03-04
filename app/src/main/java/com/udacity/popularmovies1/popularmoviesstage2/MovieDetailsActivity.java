@@ -44,8 +44,6 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
 
-    private String API_KEY = "";
-
     private Movie movie;
 
     //Views
@@ -139,9 +137,6 @@ public class MovieDetailsActivity extends AppCompatActivity
             movieFavourite.setOnClickListener(this);
             movieOverview.setText(movie.getOverview());
 
-            API_KEY = getResources().getString(R.string.api_key);
-
-
 
             Retrofit retrofit = RetrofitServices.getRetrofitInstance();
             apiModel = retrofit.create(RetrofitApiInterface.class);
@@ -163,7 +158,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     private void retrieveMovieDetails(long movieId){
         setShowLoader(true);
-        callMovie = apiModel.movieDetail(movieId, API_KEY);
+        callMovie = apiModel.movieDetail(movieId, MainActivity.API_KEY);
         callMovie.enqueue(new Callback<Movie>() {
             @Override
             public void onResponse(Call<Movie> call, Response<Movie> response) {
@@ -197,7 +192,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     private void retrieveVideos(long movieId){
         setShowVideosLoader(true);
-        callVideos = apiModel.videosList(movieId, API_KEY);
+        callVideos = apiModel.videosList(movieId, MainActivity.API_KEY);
 
         callVideos.enqueue(new Callback<ApiVideosModel>() {
             @Override
@@ -230,7 +225,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     private void retrieveReviews(long movieId){
         setShowReviewsLoader(true);
-        callReviews = apiModel.reviewsList(movieId, API_KEY);
+        callReviews = apiModel.reviewsList(movieId, MainActivity.API_KEY);
 
         callReviews.enqueue(new Callback<ApiReviewsModel>() {
             @Override
@@ -342,5 +337,6 @@ public class MovieDetailsActivity extends AppCompatActivity
                 Toast.makeText(this, "Movie removed from favourite!", Toast.LENGTH_LONG).show();
             }
         }
+        getContentResolver().notifyChange(MoviesContract.MoviesEntry.CONTENT_URI, null);
     }
 }

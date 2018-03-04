@@ -21,7 +21,8 @@
         android:textSize="20sp"
         android:textColor="#FF0000"
         android:visibility="invisible"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/movies_gv"

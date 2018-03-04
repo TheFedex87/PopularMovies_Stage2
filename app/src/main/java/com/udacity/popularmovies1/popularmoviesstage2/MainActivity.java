@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String API_KEY = "";
+    public static final String API_KEY = BuildConfig.API_KEY;
 
     private final int NUMBER_OF_COLUMNS = 2;
 
@@ -66,8 +66,11 @@ public class MainActivity extends AppCompatActivity implements
         TOP_RATED,
         FAVOURITES
     }
-    EMovieList movieListType;
-    boolean moviesFavouriteLoaded = false;
+    //Save the current selected movie list
+    private EMovieList movieListType;
+
+    //Set to true when the CursorLoader loads the favourite movie list from ContentProvider
+    private boolean moviesFavouriteLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +82,6 @@ public class MainActivity extends AppCompatActivity implements
         moviesContainer = findViewById(R.id.movies_gv);
         errorMissingApi = findViewById(R.id.error_message);
 
-        //Load API KEY from resources
-        API_KEY = getResources().getString(R.string.api_key);
 
         if(!API_KEY.isEmpty()) {
 
@@ -92,13 +93,11 @@ public class MainActivity extends AppCompatActivity implements
             movieAdapter = new MoviesAdapter(this, this);
             moviesContainer.setAdapter(movieAdapter);
 
-            //getLoaderManager().initLoader(FAVOURITE_MOVIE_LOADER_ID, null, this);
-            //getSupportLoaderManager();
-
             //Create the retrofit, used for retrieve and parse JSON of movies
             Retrofit retrofit = RetrofitServices.getRetrofitInstance();
             apiModel = retrofit.create(RetrofitApiInterface.class);
 
+            //If bundle contains a value, I retrieve the previous selected movie list
             if (savedInstanceState != null){
                 if (savedInstanceState.containsKey("movie_type")){
                     movieListType = (EMovieList)savedInstanceState.getSerializable("movie_type");
@@ -191,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /*
-    When app is loading movies a progress bar is shoed and the grid is hidden, and when movies are loaded grid is visible and progress bar is hidden
+    When app is loading movies a progress bar is showed and the grid is hidden, and when movies are loaded grid is visible and progress bar is hidden
      */
     private void setShowLoader(boolean shows){
         if (shows){
@@ -216,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if(API_KEY.isEmpty()) return;
+
                 String sortType = adapterView.getItemAtPosition(i).toString();
                 if (sortType.equals(getResources().getString(R.string.sort_popular))) {
                     getMoviesSortedByPopular();
@@ -272,7 +273,9 @@ public class MainActivity extends AppCompatActivity implements
 
         switch (i){
             case FAVOURITE_MOVIE_LOADER_ID:
+                //Set the favourite move as not loaded
                 moviesFavouriteLoaded = false;
+                //Create the cursor loader, responsable for the favourite movie retrieve
                 CursorLoader loader = new CursorLoader(this,
                         MoviesContract.MoviesEntry.CONTENT_URI,
                         null,
@@ -291,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         if (cursor != null) {
+            //Run through the cursor and load the movie into a list
             cursor.moveToFirst();
             moviesFavouriteList = new ArrayList<Movie>();
 
@@ -313,6 +317,7 @@ public class MainActivity extends AppCompatActivity implements
 
             moviesFavouriteLoaded = true;
             setShowLoader(false);
+
             if (movieListType == EMovieList.FAVOURITES) getMoviesFavourites();
         }
     }
@@ -326,18 +331,18 @@ public class MainActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        //Save the selected movie list in order to show it again after the activity is recreated
         outState.putSerializable("movie_type", movieListType);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        //If movies favourite is selected, I show the cursor loader since we need to reload the cursor because we should be back from a detail activity
+        //and the state of favourites movie could be changed
         if (movieListType == EMovieList.FAVOURITES) setShowLoader(true);
 
-        if (getSupportLoaderManager().getLoader(FAVOURITE_MOVIE_LOADER_ID) == null) {
-            getSupportLoaderManager().initLoader(FAVOURITE_MOVIE_LOADER_ID, null, this);
-        } else {
-            getSupportLoaderManager().restartLoader(FAVOURITE_MOVIE_LOADER_ID, null, this);
-        }
+        getSupportLoaderManager().initLoader(FAVOURITE_MOVIE_LOADER_ID, null, this);
     }
 }
