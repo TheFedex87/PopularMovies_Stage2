@@ -1,5 +1,6 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
+import android.content.Context;
 import android.support.v4.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +22,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerApplicationComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.NetworkModule;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.RetrofitApiInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.data.MoviesContract;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiMoviesModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
@@ -77,11 +83,17 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        MyApp.app().appComponent().inject(this);
+
+        Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().networkModule(new NetworkModule()).build().getPicasso();
+
         //Retrieve the views
         loader = findViewById(R.id.loader_pb);
         moviesContainer = findViewById(R.id.movies_gv);
         errorMissingApi = findViewById(R.id.error_message);
 
+        //RetrofitApiInterfaceComponent c = DaggerRetrofitApiInterfaceComponent.builder().contextModule(new ContextModule(this)).build();
+        //Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().networkModule(new NetworkModule()).build().getPicasso();
 
         if(!API_KEY.isEmpty()) {
 
