@@ -9,9 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created by federico.creti on 16/02/2018.
@@ -20,12 +24,13 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
     private List<Movie> moviesList;
-    private Context context;
+
+    @Inject Context context;
 
     private ListItemClickListener clickListener;
 
-    public MoviesAdapter(Context context, ListItemClickListener clickListener){
-        this.context = context;
+    public MoviesAdapter(ListItemClickListener clickListener){
+        //this.context = context;
         this.clickListener = clickListener;
     }
 
@@ -75,7 +80,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         public void setMovieImage(int position){
             String imageUrl = URL_BASE_MOVIE_BANNER + moviesList.get(position).getBackdropPath();
-            Picasso.with(context).load(imageUrl).into(poster);
+            DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getPicasso().load(imageUrl).into(poster);
         }
 
         @Override

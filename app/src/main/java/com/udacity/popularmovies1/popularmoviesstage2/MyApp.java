@@ -6,6 +6,10 @@ import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationComponen
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerApplicationComponent;
 
+import javax.inject.Inject;
+
+import dagger.Provides;
+
 /**
  * Created by federico.creti on 06/03/2018.
  */

@@ -13,9 +13,8 @@ import dagger.Component;
  * Created by federico.creti on 05/03/2018.
  */
 @Singleton
-@Component(modules = { ApplicationModule.class, NetworkModule.class} )
+@Component(modules = { ApplicationModule.class, NetworkModule.class})
 public interface RetrofitApiInterfaceComponent {
     RetrofitApiInterface getRetrofitApiInterface();
     Picasso getPicasso();
-
 }

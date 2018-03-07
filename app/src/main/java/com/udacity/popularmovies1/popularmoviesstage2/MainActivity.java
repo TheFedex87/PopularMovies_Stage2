@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerApplicationComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.NetworkModule;
@@ -35,6 +36,8 @@ import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,22 +81,21 @@ public class MainActivity extends AppCompatActivity implements
     //Set to true when the CursorLoader loads the favourite movie list from ContentProvider
     private boolean moviesFavouriteLoaded = false;
 
+    @Inject Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build().inject(this);
         MyApp.app().appComponent().inject(this);
-
-        Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().networkModule(new NetworkModule()).build().getPicasso();
+        Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getPicasso();
 
         //Retrieve the views
         loader = findViewById(R.id.loader_pb);
         moviesContainer = findViewById(R.id.movies_gv);
         errorMissingApi = findViewById(R.id.error_message);
-
-        //RetrofitApiInterfaceComponent c = DaggerRetrofitApiInterfaceComponent.builder().contextModule(new ContextModule(this)).build();
-        //Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().networkModule(new NetworkModule()).build().getPicasso();
 
         if(!API_KEY.isEmpty()) {
 
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements
             moviesContainer.setLayoutManager(gridLayoutManager);
 
             //Create and set the adapter of the recycler view
-            movieAdapter = new MoviesAdapter(this, this);
+            movieAdapter = new MoviesAdapter(this);
             moviesContainer.setAdapter(movieAdapter);
 
             //Create the retrofit, used for retrieve and parse JSON of movies
