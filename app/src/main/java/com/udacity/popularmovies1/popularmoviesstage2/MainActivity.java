@@ -29,6 +29,7 @@ import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiIn
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerUserInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.NetworkModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.RetrofitApiInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceModule;
 import com.udacity.popularmovies1.popularmoviesstage2.data.MoviesContract;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiMoviesModel;
@@ -90,10 +91,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build().inject(this);
         MyApp.app().appComponent().inject(this);
 
-        Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getPicasso();
 
         //Retrieve the views
         loader = findViewById(R.id.loader_pb);
@@ -102,12 +101,18 @@ public class MainActivity extends AppCompatActivity implements
 
         if(!API_KEY.isEmpty()) {
 
+            UserInterfaceComponent userInterfaceComponent = DaggerUserInterfaceComponent
+                    .builder()
+                    .applicationModule(new ApplicationModule(context))
+                    .userInterfaceModule(new UserInterfaceModule(this, null, NUMBER_OF_COLUMNS))
+                    .build();
+
             //Create and the layout manager of the recycler view
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, NUMBER_OF_COLUMNS);
+            GridLayoutManager gridLayoutManager = userInterfaceComponent.getGridLayoutManager();
             moviesContainer.setLayoutManager(gridLayoutManager);
 
             //Create and set the adapter of the recycler view
-            movieAdapter = DaggerUserInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).userInterfaceModule(new UserInterfaceModule(this)).build().getMovieAdapter(); //new MoviesAdapter(this);
+            movieAdapter = userInterfaceComponent.getMovieAdapter(); //new MoviesAdapter(this);
             moviesContainer.setAdapter(movieAdapter);
 
             //Create the retrofit, used for retrieve and parse JSON of movies

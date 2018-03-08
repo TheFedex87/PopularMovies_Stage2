@@ -24,12 +24,12 @@ import javax.inject.Inject;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
     private List<Movie> moviesList;
-    @Inject Context context;
+    private Context context;
 
     private ListItemClickListener clickListener;
 
-    public MoviesAdapter( ListItemClickListener clickListener){
-        //this.context = context;
+    public MoviesAdapter(Context context, ListItemClickListener clickListener){
+        this.context = context;
         this.clickListener = clickListener;
     }
 

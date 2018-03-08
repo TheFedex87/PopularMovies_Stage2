@@ -1,9 +1,8 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
 import android.content.ActivityNotFoundException;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,11 +16,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerUserInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceModule;
 import com.udacity.popularmovies1.popularmoviesstage2.data.MoviesContract;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiReviewsModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiVideosModel;
@@ -32,6 +34,8 @@ import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitApiInterf
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -88,6 +92,12 @@ public class MovieDetailsActivity extends AppCompatActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
+        UserInterfaceComponent userInterfaceComponent = DaggerUserInterfaceComponent
+                .builder()
+                .applicationModule(new ApplicationModule(this))
+                .userInterfaceModule(new UserInterfaceModule(null, this, 0))
+                .build();
+
         //Retrieve the UI components
         loader = findViewById(R.id.loader_pb);
         movieDetailsContainer = findViewById(R.id.movies_details_container);
@@ -101,14 +111,14 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         loaderVideos = findViewById(R.id.loader_videos_pb);
         videosContainer = findViewById(R.id.videos_container);
-        videosContainer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        videosAdapter = new VideosAdapter(this);
+        videosContainer.setLayoutManager(userInterfaceComponent.getLinearLayoutManager());
+        videosAdapter = userInterfaceComponent.getVideosAdapter();
         videosContainer.setAdapter(videosAdapter);
 
         loaderReviews = findViewById(R.id.loader_reviews_pb);
         reviewsContainer = findViewById(R.id.reviews_container);
-        reviewsContainer.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        reviewsAdapter = new ReviewsAdapter();
+        reviewsContainer.setLayoutManager(userInterfaceComponent.getLinearLayoutManager());
+        reviewsAdapter = userInterfaceComponent.getReviewsAdapter();
         reviewsContainer.setAdapter(reviewsAdapter);
 
 
@@ -128,7 +138,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
             //Load backdrop poster
             String imageUrl = URL_BASE_MOVIE_BANNER + movie.getPosterPath();
-            Picasso.with(this).load(imageUrl).into(poster);
+            DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build().getPicasso().load(imageUrl).into(poster);
 
             //Load all information on UI components
             movieTitle.setText(movie.getTitle());
@@ -146,7 +156,7 @@ public class MovieDetailsActivity extends AppCompatActivity
                 cursor.moveToFirst();
                 movieIdIntoDb = cursor.getLong(cursor.getColumnIndex(MoviesContract.MoviesEntry._ID));
 
-                movieDuration.setText(String.valueOf(movie.getRuntime()));
+                movieDuration.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_DURATION))));
             } else {
                 retrieveMovieDetails(movie.getId());
             }
