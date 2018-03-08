@@ -24,7 +24,6 @@ import javax.inject.Inject;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
     private List<Movie> moviesList;
-
     @Inject Context context;
 
     private ListItemClickListener clickListener;
@@ -80,6 +79,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         public void setMovieImage(int position){
             String imageUrl = URL_BASE_MOVIE_BANNER + moviesList.get(position).getBackdropPath();
+            //Picasso.with(context).load(imageUrl).into(poster);
             DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getPicasso().load(imageUrl).into(poster);
         }
 

@@ -26,8 +26,10 @@ import com.squareup.picasso.Picasso;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerApplicationComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerUserInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.NetworkModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.RetrofitApiInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceModule;
 import com.udacity.popularmovies1.popularmoviesstage2.data.MoviesContract;
 import com.udacity.popularmovies1.popularmoviesstage2.model.ApiMoviesModel;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
@@ -90,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //DaggerApplicationComponent.builder().applicationModule(new ApplicationModule()).build().inject(this);
         MyApp.app().appComponent().inject(this);
+
         Picasso picasso = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getPicasso();
 
         //Retrieve the views
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
             moviesContainer.setLayoutManager(gridLayoutManager);
 
             //Create and set the adapter of the recycler view
-            movieAdapter = new MoviesAdapter(this);
+            movieAdapter = DaggerUserInterfaceComponent.builder().userInterfaceModule(new UserInterfaceModule(this)).build().getMovieAdapter(); //new MoviesAdapter(this);
             moviesContainer.setAdapter(movieAdapter);
 
             //Create the retrofit, used for retrieve and parse JSON of movies
