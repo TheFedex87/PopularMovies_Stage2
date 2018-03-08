@@ -1,5 +1,7 @@
 package com.udacity.popularmovies1.popularmoviesstage2.dagger;
 
+import android.content.Context;
+
 import com.udacity.popularmovies1.popularmoviesstage2.MoviesAdapter;
 
 import javax.inject.Singleton;

@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
             moviesContainer.setLayoutManager(gridLayoutManager);
 
             //Create and set the adapter of the recycler view
-            movieAdapter = DaggerUserInterfaceComponent.builder().userInterfaceModule(new UserInterfaceModule(this)).build().getMovieAdapter(); //new MoviesAdapter(this);
+            movieAdapter = DaggerUserInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).userInterfaceModule(new UserInterfaceModule(this)).build().getMovieAdapter(); //new MoviesAdapter(this);
             moviesContainer.setAdapter(movieAdapter);
 
             //Create the retrofit, used for retrieve and parse JSON of movies

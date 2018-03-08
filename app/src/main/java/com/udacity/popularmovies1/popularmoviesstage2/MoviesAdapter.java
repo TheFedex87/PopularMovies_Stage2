@@ -28,7 +28,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private ListItemClickListener clickListener;
 
-    public MoviesAdapter(ListItemClickListener clickListener){
+    public MoviesAdapter( ListItemClickListener clickListener){
         //this.context = context;
         this.clickListener = clickListener;
     }
