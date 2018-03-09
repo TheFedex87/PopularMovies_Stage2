@@ -14,20 +14,17 @@ import dagger.Provides;
  * Created by federico.creti on 06/03/2018.
  */
 
+/**
+ * Class used to store the ApplicationContext in order to be inject later throught Dagger 2
+ */
 public class MyApp extends Application {
-    private static MyApp app;
     private static ApplicationComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        app = this;
 
         appComponent = DaggerApplicationComponent.builder().applicationModule(new ApplicationModule(getApplicationContext())).build();
-    }
-
-    public static MyApp app() {
-        return app;
     }
 
     public static ApplicationComponent appComponent(){

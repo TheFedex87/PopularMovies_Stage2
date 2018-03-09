@@ -11,6 +11,8 @@ import com.udacity.popularmovies1.popularmoviesstage2.model.Video;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by federico.creti on 22/02/2018.
  */
@@ -19,6 +21,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideoViewH
     private List<Video> videos;
     private movieVideoClickListener videoClickListener;
 
+    @Inject
     public VideosAdapter(@NonNull movieVideoClickListener onVideoClicked){
         this.videoClickListener = onVideoClicked;
     }

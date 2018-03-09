@@ -11,12 +11,19 @@ import com.udacity.popularmovies1.popularmoviesstage2.model.Review;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created by Federico on 25/02/2018.
  */
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsViewHolder> {
     private List<Review> reviews;
+
+    @Inject
+    public ReviewsAdapter(){
+
+    }
 
 
     public void swapReviews(List<Review> reviews){

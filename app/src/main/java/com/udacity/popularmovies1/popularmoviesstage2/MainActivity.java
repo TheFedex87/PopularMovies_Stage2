@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements
     //Set to true when the CursorLoader loads the favourite movie list from ContentProvider
     private boolean moviesFavouriteLoaded = false;
 
+    //Context injected from Dagger 2
     @Inject Context context;
 
     @Override
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MyApp.app().appComponent().inject(this);
-
+        //Inject the context on this class through field injection of Dagger 2
+        MyApp.appComponent().inject(this);
 
         //Retrieve the views
         loader = findViewById(R.id.loader_pb);
@@ -107,17 +108,16 @@ public class MainActivity extends AppCompatActivity implements
                     .userInterfaceModule(new UserInterfaceModule(this, null, NUMBER_OF_COLUMNS))
                     .build();
 
-            //Create and the layout manager of the recycler view
+            //Retrieve the layout manager of the recycler view
             GridLayoutManager gridLayoutManager = userInterfaceComponent.getGridLayoutManager();
             moviesContainer.setLayoutManager(gridLayoutManager);
 
-            //Create and set the adapter of the recycler view
-            movieAdapter = userInterfaceComponent.getMovieAdapter(); //new MoviesAdapter(this);
+            //Retrieve and set the adapter of the recycler view
+            movieAdapter = userInterfaceComponent.getMovieAdapter();
             moviesContainer.setAdapter(movieAdapter);
 
-            //Create the retrofit, used for retrieve and parse JSON of movies
-            Retrofit retrofit = RetrofitServices.getRetrofitInstance();
-            apiModel = retrofit.create(RetrofitApiInterface.class);
+            //Retrieve RetrofitApiInterface used to retrieve movies
+            apiModel = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(context)).build().getRetrofitApiInterface();
 
             //If bundle contains a value, I retrieve the previous selected movie list
             if (savedInstanceState != null){

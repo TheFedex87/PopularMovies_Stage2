@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public final class RetrofitServices {
-    private static Retrofit retrofit = null;
+    /*private static Retrofit retrofit = null;
     private static final String BASE_URL = "http://api.themoviedb.org/3/";
 
     public static Retrofit getRetrofitInstance(){
@@ -20,5 +20,5 @@ public final class RetrofitServices {
                     .build();
         }
         return retrofit;
-    }
+    }*/
 }

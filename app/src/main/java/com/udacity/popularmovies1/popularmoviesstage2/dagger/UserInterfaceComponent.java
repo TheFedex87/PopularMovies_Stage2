@@ -1,5 +1,6 @@
 package com.udacity.popularmovies1.popularmoviesstage2.dagger;
 
+import android.app.LauncherActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 
@@ -21,6 +22,7 @@ public interface UserInterfaceComponent {
     MoviesAdapter getMovieAdapter();
     VideosAdapter getVideosAdapter();
     ReviewsAdapter getReviewsAdapter();
+
     GridLayoutManager getGridLayoutManager();
     LinearLayoutManager getLinearLayoutManager();
 }

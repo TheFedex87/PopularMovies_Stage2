@@ -40,11 +40,21 @@ public class UserInterfaceModule {
     }
 
     @Provides
-    public MoviesAdapter provideMoviesAdapter(Context context){
-        return new MoviesAdapter(context, listItemClickListener);
+    public MoviesAdapter.ListItemClickListener listItemClickListener() {
+        return listItemClickListener;
     }
 
     @Provides
+    public VideosAdapter.movieVideoClickListener movieVideoClickListener(){
+        return movieVideoClickListener;
+    }
+/*
+    @Provides
+    public MoviesAdapter provideMoviesAdapter(Context context){
+        return new MoviesAdapter(listItemClickListener);
+    }*/
+
+    /*@Provides
     public VideosAdapter provideVideosAdapter(){
         return new VideosAdapter(movieVideoClickListener);
     }
@@ -52,5 +62,5 @@ public class UserInterfaceModule {
     @Provides
     public ReviewsAdapter provideReviewsAdapter(){
         return new ReviewsAdapter();
-    }
+    }*/
 }

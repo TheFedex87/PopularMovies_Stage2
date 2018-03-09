@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.ApplicationModule;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerRetrofitApiInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.DaggerUserInterfaceComponent;
+import com.udacity.popularmovies1.popularmoviesstage2.dagger.RetrofitApiInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceComponent;
 import com.udacity.popularmovies1.popularmoviesstage2.dagger.UserInterfaceModule;
 import com.udacity.popularmovies1.popularmoviesstage2.data.MoviesContract;
@@ -80,11 +81,14 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     private long movieIdIntoDb;
 
+    @Inject Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+        MyApp.appComponent().inject(this);
         ActionBar actionBar = this.getSupportActionBar();
 
         // Set the action bar back button to look like an up button
@@ -94,7 +98,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         UserInterfaceComponent userInterfaceComponent = DaggerUserInterfaceComponent
                 .builder()
-                .applicationModule(new ApplicationModule(this))
+                .applicationModule(new ApplicationModule(context))
                 .userInterfaceModule(new UserInterfaceModule(null, this, 0))
                 .build();
 
@@ -135,10 +139,11 @@ public class MovieDetailsActivity extends AppCompatActivity
                     null,
                     MoviesContract.MoviesEntry.COLUMN_TITLE);
 
+            RetrofitApiInterfaceComponent daggerRetrofitApiInterfaceComponent = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build();
 
             //Load backdrop poster
             String imageUrl = URL_BASE_MOVIE_BANNER + movie.getPosterPath();
-            DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build().getPicasso().load(imageUrl).into(poster);
+            daggerRetrofitApiInterfaceComponent.getPicasso().load(imageUrl).into(poster);
 
             //Load all information on UI components
             movieTitle.setText(movie.getTitle());
@@ -147,9 +152,7 @@ public class MovieDetailsActivity extends AppCompatActivity
             movieFavourite.setOnClickListener(this);
             movieOverview.setText(movie.getOverview());
 
-
-            Retrofit retrofit = RetrofitServices.getRetrofitInstance();
-            apiModel = retrofit.create(RetrofitApiInterface.class);
+            apiModel = daggerRetrofitApiInterfaceComponent.getRetrofitApiInterface();
 
             if (cursor.getCount() > 0){
                 movieFavourite.setImageDrawable(getResources().getDrawable(android.R.drawable.btn_star_big_on));
