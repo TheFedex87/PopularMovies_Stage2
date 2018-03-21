@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
+        android:textStyle="bold"
         tools:Text="Author" />
 
     <TextView
@@ -23,6 +24,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:maxLines="@integer/collapsed_review_max_lines"
+        android:ellipsize="end"
         tools:Text="Comment" />
 
     <View

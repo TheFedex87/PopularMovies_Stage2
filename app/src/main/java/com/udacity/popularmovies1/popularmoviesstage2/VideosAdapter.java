@@ -13,6 +13,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by federico.creti on 22/02/2018.
  */
@@ -59,14 +62,13 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideoViewH
 
     class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private TextView videoName;
-        private View videoSeparator;
+        @BindView(R.id.video_name) TextView videoName;
+        @BindView(R.id.video_separator) View videoSeparator;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
 
-            videoName = itemView.findViewById(R.id.video_name);
-            videoSeparator = itemView.findViewById(R.id.video_separator);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(this);
         }

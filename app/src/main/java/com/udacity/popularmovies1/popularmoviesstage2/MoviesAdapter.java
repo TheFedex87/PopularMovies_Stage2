@@ -17,6 +17,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by federico.creti on 16/02/2018.
  */
@@ -68,12 +71,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     class MovieViewHolder extends ViewHolder implements View.OnClickListener{
 
-        private ImageView poster;
+        @BindView(R.id.movie_poster) ImageView poster;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
 
-            poster = (ImageView) itemView.findViewById(R.id.movie_poster);
+            ButterKnife.bind(this, itemView);
             poster.setAdjustViewBounds(true);
             poster.setScaleType(ImageView.ScaleType.CENTER_CROP);
             poster.setOnClickListener(this);

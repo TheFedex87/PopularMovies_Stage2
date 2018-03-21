@@ -42,6 +42,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements
     private List<Movie> moviesFavouriteList;
 
     //Views
-    private ProgressBar loader;
-    private RecyclerView moviesContainer;
-    private TextView errorMissingApi;
+    @BindView(R.id.loader_pb) ProgressBar loader;
+    @BindView(R.id.movies_gv) RecyclerView moviesContainer;
+    @BindView(R.id.error_message) TextView errorMissingApi;
     ///////
 
     private final static int FAVOURITE_MOVIE_LOADER_ID = 3654;
@@ -96,9 +98,7 @@ public class MainActivity extends AppCompatActivity implements
         MyApp.appComponent().inject(this);
 
         //Retrieve the views
-        loader = findViewById(R.id.loader_pb);
-        moviesContainer = findViewById(R.id.movies_gv);
-        errorMissingApi = findViewById(R.id.error_message);
+        ButterKnife.bind(this);
 
         if(!API_KEY.isEmpty()) {
 

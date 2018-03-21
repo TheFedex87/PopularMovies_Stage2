@@ -13,6 +13,10 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindInt;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Federico on 25/02/2018.
  */
@@ -51,17 +55,20 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
         return reviews.size();
     }
 
-    class ReviewsViewHolder extends ViewHolder {
-        private TextView reviewAuthor;
-        private TextView review;
-        private View reviewSeparator;
+    class ReviewsViewHolder extends ViewHolder implements View.OnClickListener {
+        @BindView(R.id.review_author) TextView reviewAuthor;
+        @BindView(R.id.review) TextView review;
+        @BindView(R.id.review_separator) View reviewSeparator;
+
+        private boolean isExpanded;
+
+        @BindInt(R.integer.collapsed_review_max_lines) int compactedMaxLines;
 
         public ReviewsViewHolder(View itemView) {
             super(itemView);
 
-            review = itemView.findViewById(R.id.review);
-            reviewSeparator = itemView.findViewById(R.id.review_separator);
-            reviewAuthor = itemView.findViewById(R.id.review_author);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
 
         public void setReview(int position){
@@ -72,6 +79,16 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
                 reviewSeparator.setVisibility(View.INVISIBLE);
             else
                 reviewSeparator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(!isExpanded){
+                review.setMaxLines(Integer.MAX_VALUE);
+            } else {
+                review.setMaxLines(compactedMaxLines);
+            }
+            isExpanded = !isExpanded;
         }
     }
 }

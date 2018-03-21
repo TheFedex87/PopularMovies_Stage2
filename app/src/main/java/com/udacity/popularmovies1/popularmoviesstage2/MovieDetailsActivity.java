@@ -38,6 +38,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -52,21 +54,21 @@ public class MovieDetailsActivity extends AppCompatActivity
     private Movie movie;
 
     //Views
-    private ProgressBar loader;
-    private NestedScrollView movieDetailsContainer;
-    private ImageView poster;
-    private TextView movieTitle;
-    private TextView movieReleaseDate;
-    private TextView movieDuration;
-    private TextView movieVoteAverage;
-    private ImageView movieFavourite;
-    private TextView movieOverview;
+    @BindView(R.id.loader_pb) ProgressBar loader;
+    @BindView(R.id.movies_details_container) NestedScrollView movieDetailsContainer;
+    @BindView(R.id.movie_poster) ImageView poster;
+    @BindView(R.id.movie_title) TextView movieTitle;
+    @BindView(R.id.movie_release_date) TextView movieReleaseDate;
+    @BindView(R.id.movie_duration) TextView movieDuration;
+    @BindView(R.id.movie_vote_average) TextView movieVoteAverage;
+    @BindView(R.id.movie_favourite) ImageView movieFavourite;
+    @BindView(R.id.movie_overview) TextView movieOverview;
 
-    private ProgressBar loaderVideos;
-    private RecyclerView videosContainer;
+    @BindView(R.id.loader_videos_pb) ProgressBar loaderVideos;
+    @BindView(R.id.videos_container) RecyclerView videosContainer;
 
-    private ProgressBar loaderReviews;
-    private RecyclerView reviewsContainer;
+    @BindView(R.id.loader_reviews_pb) ProgressBar loaderReviews;
+    @BindView(R.id.reviews_container) RecyclerView reviewsContainer;
     ///////
 
     private VideosAdapter videosAdapter;
@@ -103,24 +105,12 @@ public class MovieDetailsActivity extends AppCompatActivity
                 .build();
 
         //Retrieve the UI components
-        loader = findViewById(R.id.loader_pb);
-        movieDetailsContainer = findViewById(R.id.movies_details_container);
-        poster = findViewById(R.id.movie_poster);
-        movieTitle = findViewById(R.id.movie_title);
-        movieReleaseDate = findViewById(R.id.movie_release_date);
-        movieDuration = findViewById(R.id.movie_duration);
-        movieVoteAverage = findViewById(R.id.movie_vote_average);
-        movieFavourite = findViewById(R.id.movie_favourite);
-        movieOverview = findViewById(R.id.movie_overview);
+        ButterKnife.bind(this);
 
-        loaderVideos = findViewById(R.id.loader_videos_pb);
-        videosContainer = findViewById(R.id.videos_container);
         videosContainer.setLayoutManager(userInterfaceComponent.getLinearLayoutManager());
         videosAdapter = userInterfaceComponent.getVideosAdapter();
         videosContainer.setAdapter(videosAdapter);
 
-        loaderReviews = findViewById(R.id.loader_reviews_pb);
-        reviewsContainer = findViewById(R.id.reviews_container);
         reviewsContainer.setLayoutManager(userInterfaceComponent.getLinearLayoutManager());
         reviewsAdapter = userInterfaceComponent.getReviewsAdapter();
         reviewsContainer.setAdapter(reviewsAdapter);
