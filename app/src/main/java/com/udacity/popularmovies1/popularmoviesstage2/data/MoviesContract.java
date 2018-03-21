@@ -7,7 +7,7 @@ import android.provider.BaseColumns;
  * Created by federico.creti on 26/02/2018.
  */
 
-public class MoviesContract implements BaseColumns {
+public class MoviesContract {
 
     //URI AUTHORITY
     public static final String AUTHORITY = "com.udacity.popularmovies1.popularmoviesstage2";
