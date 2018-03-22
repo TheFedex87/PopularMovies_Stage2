@@ -1,6 +1,7 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v4.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
@@ -47,7 +48,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity implements
         MoviesAdapter.ListItemClickListener,
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private List<Movie> moviesList;
     private List<Movie> moviesFavouriteList;
+
+    private Parcelable layoutManagerState = null;
 
     //Views
     @BindView(R.id.loader_pb) ProgressBar loader;
@@ -124,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements
                 if (savedInstanceState.containsKey("movie_type")){
                     movieListType = (EMovieList)savedInstanceState.getSerializable("movie_type");
                 }
+                if (savedInstanceState.containsKey("scroll_position")){
+                    layoutManagerState = savedInstanceState.getParcelable("scroll_position");
+                }
             }
         }
         else
@@ -162,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements
     private void getMoviesFavourites() {
         moviesList = moviesFavouriteList;
         movieAdapter.swapMoviesList(moviesList);
+        if (layoutManagerState != null) moviesContainer.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+        layoutManagerState = null;
         movieListType = EMovieList.FAVOURITES;
         if (moviesFavouriteLoaded) setShowLoader(false);
     }
@@ -186,6 +193,8 @@ public class MainActivity extends AppCompatActivity implements
                         setShowLoader(false);
                         //Set the retrieve list of movies into the adapter of GridView
                         movieAdapter.swapMoviesList(moviesList);
+                        if (layoutManagerState != null) moviesContainer.getLayoutManager().onRestoreInstanceState(layoutManagerState);
+                        layoutManagerState = null;
                     } catch (Exception ex){
                         Log.d(TAG, ex.getMessage());
                         Toast.makeText(MainActivity.this, "Unexpected message: " + ex.getMessage(), Toast.LENGTH_LONG).show();
@@ -355,6 +364,7 @@ public class MainActivity extends AppCompatActivity implements
 
         //Save the selected movie list in order to show it again after the activity is recreated
         outState.putSerializable("movie_type", movieListType);
+        outState.putParcelable("scroll_position", ((GridLayoutManager)moviesContainer.getLayoutManager()).onSaveInstanceState());
     }
 
     @Override

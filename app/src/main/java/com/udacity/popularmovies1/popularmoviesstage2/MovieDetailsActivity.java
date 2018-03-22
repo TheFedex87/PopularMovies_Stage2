@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +36,8 @@ import com.udacity.popularmovies1.popularmoviesstage2.model.Video;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitApiInterface;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,7 +47,6 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MovieDetailsActivity extends AppCompatActivity
         implements VideosAdapter.movieVideoClickListener, View.OnClickListener{
@@ -52,6 +55,8 @@ public class MovieDetailsActivity extends AppCompatActivity
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
 
     private Movie movie;
+
+    private int[] movieDetailsContainerPosition = null;
 
     //Views
     @BindView(R.id.loader_pb) ProgressBar loader;
@@ -154,8 +159,24 @@ public class MovieDetailsActivity extends AppCompatActivity
                 retrieveMovieDetails(movie.getId());
             }
 
-            retrieveVideos(movie.getId());
-            retrieveReviews(movie.getId());
+            if (savedInstanceState == null) {
+                retrieveVideos(movie.getId());
+                retrieveReviews(movie.getId());
+            } else {
+                if (savedInstanceState.containsKey("videos_list")){
+                    videos = new ArrayList(Arrays.asList(savedInstanceState.getParcelableArray("videos_list")));
+                    videosAdapter.swapVideos(videos);
+                }
+                if (savedInstanceState.containsKey("reviews_list")){
+                    reviews = new ArrayList(Arrays.asList(savedInstanceState.getParcelableArray("reviews_list")));
+                    reviewsAdapter.swapReviews(reviews);
+                }
+                if (savedInstanceState.containsKey("scroll_position")){
+                    int[] positions = savedInstanceState.getIntArray("scroll_position");
+                    movieDetailsContainer.setScrollX(positions[0]);
+                    movieDetailsContainer.setScrollY(positions[1]);
+                }
+            }
         }
     }
 
@@ -341,5 +362,15 @@ public class MovieDetailsActivity extends AppCompatActivity
             }
         }
         getContentResolver().notifyChange(MoviesContract.MoviesEntry.CONTENT_URI, null);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the selected movie list in order to show it again after the activity is recreated
+        outState.putIntArray("scroll_position", new int[]{ movieDetailsContainer.getScrollX(), movieDetailsContainer.getScrollY()});
+        outState.putParcelableArray("videos_list", videos.toArray(new Video[videos.size()]));
+        outState.putParcelableArray("reviews_list", reviews.toArray(new Review[reviews.size()]));
     }
 }

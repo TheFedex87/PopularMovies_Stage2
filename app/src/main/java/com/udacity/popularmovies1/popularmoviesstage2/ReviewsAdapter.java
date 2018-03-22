@@ -79,6 +79,12 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
                 reviewSeparator.setVisibility(View.INVISIBLE);
             else
                 reviewSeparator.setVisibility(View.VISIBLE);
+
+            if (reviews.get(position).isExpanded()) {
+                review.setMaxLines(Integer.MAX_VALUE);
+            } else {
+                review.setMaxLines(compactedMaxLines);
+            }
         }
 
         @Override
@@ -89,6 +95,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsV
                 review.setMaxLines(compactedMaxLines);
             }
             isExpanded = !isExpanded;
+            reviews.get(getAdapterPosition()).setExpanded(isExpanded);
         }
     }
 }
