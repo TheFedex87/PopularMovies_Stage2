@@ -30,8 +30,7 @@
             <ImageView
                 android:id="@+id/movie_title_container"
                 android:layout_width="0dp"
-                android:layout_height="110dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_height="210dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -289,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListItemClick(int positionClicked) {
+    public void onListItemClick(int positionClicked, ImageView imageView) {
         //Create the intent for open new activity
         Intent intent = new Intent(this, MovieDetailsActivity.class);
 
@@ -299,9 +300,10 @@ public class MainActivity extends AppCompatActivity implements
         b.putParcelable(Movie.CLASS_STRING_EXTRA, movie);
         intent.putExtras(b);
 
-        Bundle b2 = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            b2 = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            Bundle b2 = null;
+            //b2 = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            b2 = ActivityOptionsCompat.makeSceneTransitionAnimation(this, imageView, imageView.getTransitionName()).toBundle();
             startActivity(intent, b2);
         } else {
             startActivity(intent);

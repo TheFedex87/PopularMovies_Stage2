@@ -5,23 +5,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,7 +36,6 @@ import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Review;
 import com.udacity.popularmovies1.popularmoviesstage2.model.Video;
 import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitApiInterface;
-import com.udacity.popularmovies1.popularmoviesstage2.retrofit.RetrofitServices;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +63,7 @@ public class MovieDetailsActivity extends AppCompatActivity
     @BindView(R.id.loader_pb) ProgressBar loader;
     @BindView(R.id.movies_details_container) NestedScrollView movieDetailsContainer;
     @BindView(R.id.movie_poster) ImageView poster;
+    @BindView(R.id.movie_title_container) ImageView movieTitleContainer;
     @BindView(R.id.movie_title) TextView movieTitle;
     @BindView(R.id.movie_release_date) TextView movieReleaseDate;
     @BindView(R.id.movie_duration) TextView movieDuration;
@@ -101,14 +97,16 @@ public class MovieDetailsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            Transition slide = TransitionInflater.from(this).inflateTransition(R.transition.slide_transiction);
+            //Transition slide = TransitionInflater.from(this).inflateTransition(R.transition.slide_bottom_transiction);
             //Slide slide = new Slide(Gravity.BOTTOM);
             //slide.addTarget(R.id.movie_detail_container);
             //slide.setInterpolator(AnimationUtils.loadInterpolator(this, android.R.interpolator.linear_out_slow_in));
             //slide.setDuration(350);
 
-            getWindow().setEnterTransition(slide);
+            //getWindow().setEnterTransition(slide);
         }
 
         MyApp.appComponent().inject(this);
@@ -152,9 +150,37 @@ public class MovieDetailsActivity extends AppCompatActivity
 
             RetrofitApiInterfaceComponent daggerRetrofitApiInterfaceComponent = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build();
 
+
+
             //Load backdrop poster
-            String imageUrl = URL_BASE_MOVIE_BANNER + movie.getPosterPath();
-            daggerRetrofitApiInterfaceComponent.getPicasso().load(imageUrl).into(poster);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                movieTitleContainer.setTransitionName(movie.getTitle());
+
+            ActivityCompat.postponeEnterTransition(this);
+            //supportPostponeEnterTransition();
+
+            String imageBackdropUrl = URL_BASE_MOVIE_BANNER + movie.getBackdropPath();
+            daggerRetrofitApiInterfaceComponent.getPicasso().load(imageBackdropUrl).noFade().into(movieTitleContainer, new com.squareup.picasso.Callback() {
+                @Override
+                public void onSuccess() {
+                    ActivityCompat.startPostponedEnterTransition(MovieDetailsActivity.this);
+                    //supportStartPostponedEnterTransition();
+                }
+
+                @Override
+                public void onError() {
+                    ActivityCompat.startPostponedEnterTransition(MovieDetailsActivity.this);
+                    //supportStartPostponedEnterTransition();
+                }
+            });
+
+            //Load poster poster
+            String imagePosterUrl = URL_BASE_MOVIE_BANNER + movie.getPosterPath();
+            daggerRetrofitApiInterfaceComponent.getPicasso().load(imagePosterUrl).into(poster);
+
+
+
+
 
             //Load all information on UI components
             movieTitle.setText(movie.getTitle());
@@ -172,7 +198,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
                 movieDuration.setText(String.valueOf(cursor.getInt(cursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_DURATION))));
             } else {
-                retrieveMovieDetails(movie.getId());
+                //retrieveMovieDetails(movie.getId());
             }
 
             if (savedInstanceState == null) {
@@ -197,7 +223,7 @@ public class MovieDetailsActivity extends AppCompatActivity
     }
 
     private void retrieveMovieDetails(long movieId){
-        setShowLoader(true);
+        //setShowLoader(true);
         callMovie = apiModel.movieDetail(movieId, MainActivity.API_KEY);
         callMovie.enqueue(new Callback<Movie>() {
             @Override

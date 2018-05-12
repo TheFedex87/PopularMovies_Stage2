@@ -1,6 +1,11 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -15,6 +20,7 @@ import com.udacity.popularmovies1.popularmoviesstage2.model.Movie;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -28,6 +34,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private final String URL_BASE_MOVIE_BANNER = "http://image.tmdb.org/t/p/w185";
     private List<Movie> moviesList;
     private Context context;
+    private Context parentActivity;
 
     private ListItemClickListener clickListener;
 
@@ -39,23 +46,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
     public interface ListItemClickListener{
-        void onListItemClick(int positionClicked);
+        void onListItemClick(int positionClicked, @Nullable ImageView imageView);
     }
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
+        if (parentActivity == null)
+            parentActivity = context;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(R.layout.recyclerview_movie, parent, false);
         MovieViewHolder viewHolder = new MovieViewHolder(view);
-
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         holder.setMovieImage(position);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //holder.poster.setTransitionName(moviesList.get(position).getTitle());
+            //holder.optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) parentActivity, holder.poster, holder.poster.getTransitionName());
+
+            ViewCompat.setTransitionName(holder.poster, moviesList.get(position).getTitle());
+        }
     }
 
     @Override
@@ -90,7 +104,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         @Override
         public void onClick(View view) {
-            clickListener.onListItemClick(getAdapterPosition());
+            clickListener.onListItemClick(getAdapterPosition(), poster);
         }
     }
 }
