@@ -1,7 +1,10 @@
 package com.udacity.popularmovies1.popularmoviesstage2;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.os.Build;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
@@ -296,7 +299,13 @@ public class MainActivity extends AppCompatActivity implements
         b.putParcelable(Movie.CLASS_STRING_EXTRA, movie);
         intent.putExtras(b);
 
-        startActivity(intent);
+        Bundle b2 = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            b2 = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
+            startActivity(intent, b2);
+        } else {
+            startActivity(intent);
+        }
     }
 
     @Override
