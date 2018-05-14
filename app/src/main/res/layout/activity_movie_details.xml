@@ -33,7 +33,19 @@
                 android:layout_height="210dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="fitXY"/>
+
+            <View
+                android:id="@+id/obscureLayer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/gradient_backdrop_layer"
+                app:layout_constraintBottom_toBottomOf="@+id/movie_title_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/movie_title_container" />
+
 
             <TextView
                 android:id="@+id/movie_title"
@@ -42,14 +54,12 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="32dp"
                 android:layout_marginStart="32dp"
-                android:layout_marginTop="8dp"
-                tools:text="TextView"
                 android:textColor="#FFF"
                 android:textSize="35sp"
                 app:layout_constraintBottom_toBottomOf="@+id/movie_title_container"
                 app:layout_constraintEnd_toEndOf="@+id/movie_title_container"
                 app:layout_constraintStart_toStartOf="@+id/movie_title_container"
-                app:layout_constraintTop_toTopOf="@+id/movie_title_container" />
+                tools:text="TextView" />
 
             <ImageView
                 android:id="@+id/movie_poster"

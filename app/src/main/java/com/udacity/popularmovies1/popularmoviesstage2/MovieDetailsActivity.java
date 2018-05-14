@@ -98,17 +98,6 @@ public class MovieDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_movie_details);
 
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-            //Transition slide = TransitionInflater.from(this).inflateTransition(R.transition.slide_bottom_transiction);
-            //Slide slide = new Slide(Gravity.BOTTOM);
-            //slide.addTarget(R.id.movie_detail_container);
-            //slide.setInterpolator(AnimationUtils.loadInterpolator(this, android.R.interpolator.linear_out_slow_in));
-            //slide.setDuration(350);
-
-            //getWindow().setEnterTransition(slide);
-        }
-
         MyApp.appComponent().inject(this);
         ActionBar actionBar = this.getSupportActionBar();
 
@@ -150,11 +139,9 @@ public class MovieDetailsActivity extends AppCompatActivity
 
             RetrofitApiInterfaceComponent daggerRetrofitApiInterfaceComponent = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build();
 
-
-
             //Load backdrop poster
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                movieTitleContainer.setTransitionName(movie.getTitle());
+                movieTitleContainer.setTransitionName("movieTransition");
 
             ActivityCompat.postponeEnterTransition(this);
             //supportPostponeEnterTransition();

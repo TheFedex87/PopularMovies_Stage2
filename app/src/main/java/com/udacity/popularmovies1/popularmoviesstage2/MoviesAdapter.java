@@ -68,7 +68,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             //holder.poster.setTransitionName(moviesList.get(position).getTitle());
             //holder.optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) parentActivity, holder.poster, holder.poster.getTransitionName());
 
-            ViewCompat.setTransitionName(holder.poster, moviesList.get(position).getTitle());
+            ViewCompat.setTransitionName(holder.poster, "movieTransition");
         }
     }
 
