@@ -139,9 +139,14 @@ public class MovieDetailsActivity extends AppCompatActivity
 
             RetrofitApiInterfaceComponent daggerRetrofitApiInterfaceComponent = DaggerRetrofitApiInterfaceComponent.builder().applicationModule(new ApplicationModule(this)).build();
 
+
+
             //Load backdrop poster
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 movieTitleContainer.setTransitionName("movieTransition");
+
+                getWindow().setSharedElementEnterTransition(TransitionInflater.from(this).inflateTransition(R.transition.curve));
+            }
 
             ActivityCompat.postponeEnterTransition(this);
             //supportPostponeEnterTransition();
